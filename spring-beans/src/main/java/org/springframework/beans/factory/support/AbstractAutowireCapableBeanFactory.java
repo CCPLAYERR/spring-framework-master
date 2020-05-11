@@ -1782,7 +1782,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			BeanNameAware：			注入当前 bean 对应 beanName；
 			BeanClassLoaderAware：	注入加载当前 bean 的 ClassLoader；
 			BeanFactoryAware：		注入 当前BeanFactory容器 的引用。
-			以上是针对 BeanFactory 类型的容器，而对于 ApplicationContext 类型的容器，也提供了 Aware 接口
+			以上是针对 BeanFactory 类型的容器，而对于 ApplicationContext 类型的容器，也提供了 Aware 接口 xxxx
 		*/
 		if (System.getSecurityManager() != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
