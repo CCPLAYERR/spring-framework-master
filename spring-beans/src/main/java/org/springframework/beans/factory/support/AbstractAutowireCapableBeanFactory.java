@@ -1776,7 +1776,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #applyBeanPostProcessorsAfterInitialization
 	 */
 	protected Object initializeBean(final String beanName, final Object bean, @Nullable RootBeanDefinition mbd) {
-		// step 3.1: 检查 Aware 相关接口并设置相关依赖
+		// step 3.1: invokeAwareMethods的作用是检查 Aware 相关接口并设置相关依赖
+		//通过让bean 实现 Aware 接口，则能在 bean 中获得相应的 Spring 容器资源。
+		/*Spring 中提供的 Aware 接口有：
+			BeanNameAware：			注入当前 bean 对应 beanName；
+			BeanClassLoaderAware：	注入加载当前 bean 的 ClassLoader；
+			BeanFactoryAware：		注入 当前BeanFactory容器 的引用。
+			以上是针对 BeanFactory 类型的容器，而对于 ApplicationContext 类型的容器，也提供了 Aware 接口
+		*/
 		if (System.getSecurityManager() != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
 				invokeAwareMethods(beanName, bean);
