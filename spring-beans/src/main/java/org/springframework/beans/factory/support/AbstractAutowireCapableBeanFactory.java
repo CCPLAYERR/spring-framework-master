@@ -504,6 +504,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			//postProcessorsBeforeInstantiation 触发入口
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -515,6 +516,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			//postProcessAfterInstantiation、postProcessProperties 触发入口
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
@@ -555,6 +557,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			//实例化bean 好像有个InstantiationAwareBeanPostProcessor会作用于实例化阶段的前后
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
@@ -1115,8 +1118,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 				Class<?> targetType = determineTargetType(beanName, mbd);
 				if (targetType != null) {
+					//回调beanPostProcessorsBeforeInstantiation实例化，
 					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
 					if (bean != null) {
+						//如果返回bean非null则直接执行 beanPostProcessorsAfterInitialization 进行实例初始化
 						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 					}
 				}
@@ -1141,6 +1146,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	protected Object applyBeanPostProcessorsBeforeInstantiation(Class<?> beanClass, String beanName) {
 		for (BeanPostProcessor bp : getBeanPostProcessors()) {
 			if (bp instanceof InstantiationAwareBeanPostProcessor) {
+				//只要其中一个postProcessBeforeInstantiation返回实例bean即结束回调，这个bean将会直接返回给bean容器管理
 				InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
 				Object result = ibp.postProcessBeforeInstantiation(beanClass, beanName);
 				if (result != null) {
@@ -1363,7 +1369,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
-	 * Populate the bean instance in the given BeanWrapper with the property values
+	 * Populate the bean instance in the given BeanWrapper with the property values(用属性值填充给定BeanWrapper中的bean实例)
 	 * from the bean definition.
 	 * @param beanName the name of the bean
 	 * @param mbd the bean definition for the bean
@@ -1385,6 +1391,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
+
+		/*
+			满足两个要求：
+			 1、BeanDefinition为应用程序bean，而非基础框架bean信息。
+			 2、注册过InstantiationAwareBeanPostProcessor类型接口，上文有提到这个标志位。
+			 3、注册了多个接口时，只要其中一个postProcessAfterInstantiation返回false，即停止后续执行。
+		* */
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -1398,6 +1411,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
 
+		//ioc依赖注入
 		int resolvedAutowireMode = mbd.getResolvedAutowireMode();
 		if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
 			MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
@@ -1412,6 +1426,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			pvs = newPvs;
 		}
 
+		// InstantiationAwareBeanPostProcessor标志位 和 依赖注入检查标志位
 		boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();
 		boolean needsDepCheck = (mbd.getDependencyCheck() != AbstractBeanDefinition.DEPENDENCY_CHECK_NONE);
 
@@ -1420,6 +1435,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (pvs == null) {
 				pvs = mbd.getPropertyValues();
 			}
+			/*1、优先回调postProcessProperties.  spring-5.1之后新增回调接口
+             * 2、再回调postProcessPropertyValues,一旦返回null即结束. spring-5.1之前逻辑
+ */
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
@@ -1794,7 +1812,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			invokeAwareMethods(beanName, bean);
 		}
 
-		//4\. BeanPostProcessor 前置处理
+		//4\. BeanPostProcessor 前置处理 作用是修改bean  可作用于容器中所有 bean
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
