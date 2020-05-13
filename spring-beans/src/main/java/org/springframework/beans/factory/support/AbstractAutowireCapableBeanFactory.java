@@ -516,7 +516,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
-			//postProcessAfterInstantiation、postProcessProperties 触发入口
+			//postProcessAfterInstantiation、postProcessProperties 触发入口 ..
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
