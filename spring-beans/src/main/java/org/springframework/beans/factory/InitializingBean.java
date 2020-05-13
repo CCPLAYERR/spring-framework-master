@@ -31,6 +31,7 @@ package org.springframework.beans.factory;
  * @see org.springframework.beans.factory.config.BeanDefinition#getPropertyValues()
  * @see org.springframework.beans.factory.support.AbstractBeanDefinition#getInitMethodName()
  */
+// Spring 为 bean 初始化提供的扩展点。
 public interface InitializingBean {
 
 	/**
@@ -41,6 +42,7 @@ public interface InitializingBean {
 	 * @throws Exception in the event of misconfiguration (such as failure to set an
 	 * essential property) or if initialization fails for any other reason
 	 */
+	//此方法写里面编写初始化逻辑
 	void afterPropertiesSet() throws Exception;
 
 }
