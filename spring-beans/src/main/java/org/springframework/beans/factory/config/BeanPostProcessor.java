@@ -21,7 +21,10 @@ import org.springframework.lang.Nullable;
 
 /**
  * Factory hook that allows for custom modification of new bean instances &mdash;
- * for example, checking for marker interfaces or wrapping beans with proxies.
+ * for example, checking for marker interfaces or wrapping beans with proxies.(允许自定义修改新bean实例的工厂钩子&mdash；例如，检查标记接口或用代理包装bean。)
+ *常用场景有：
+ * 	对于标记接口的实现类，进行自定义处理。
+ * 	为当前对象提供代理实现。例如 Spring AOP 功能，生成对象的代理类，然后返回(例如AbstractAutoProxyCreator.java中的postProcessBeforeInstantiation方法)
  *
  * <p>Typically, post-processors that populate beans via marker interfaces
  * or the like will implement {@link #postProcessBeforeInitialization},
@@ -71,7 +74,7 @@ public interface BeanPostProcessor {
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
 	 */
 	@Nullable
-	default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+	default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {//// 开始初始化之前的前置处理
 		return bean;
 	}
 
@@ -97,7 +100,7 @@ public interface BeanPostProcessor {
 	 * @see org.springframework.beans.factory.FactoryBean
 	 */
 	@Nullable
-	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {// 初始化完成之后的后置处理
 		return bean;
 	}
 

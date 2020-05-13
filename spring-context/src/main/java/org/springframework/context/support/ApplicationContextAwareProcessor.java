@@ -102,7 +102,12 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 		return bean;
 	}
-
+/*对于 ApplicationContext 类型的容器，也提供了 Aware 接口.
+只不过这些 Aware 接口的注入实现，是通过 BeanPostProcessor 的方式注入的，但其作用仍是注入依赖。
+	1.EnvironmentAware：			注入 Enviroment，一般用于获取配置属性；
+	2.EmbeddedValueResolverAware：	注入 EmbeddedValueResolver（Spring EL解析器），一般用于参数解析；
+	3.ApplicationContextAware（ResourceLoader、ApplicationEventPublisherAware、MessageSourceAware）：注入 ApplicationContext 容器本身。
+*/
 	private void invokeAwareInterfaces(Object bean) {
 		if (bean instanceof EnvironmentAware) {
 			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
