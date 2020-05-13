@@ -71,7 +71,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	 * @see org.springframework.beans.factory.support.AbstractBeanDefinition#getFactoryMethodName()
 	 */
 	@Nullable
-	default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+	default Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {//实例化之前前置处理
 		return null;
 	}
 
@@ -90,7 +90,7 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	 * @throws org.springframework.beans.BeansException in case of errors
 	 * @see #postProcessBeforeInstantiation
 	 */
-	default boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+	default boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {//实例化之后后置处理
 		return true;
 	}
 
