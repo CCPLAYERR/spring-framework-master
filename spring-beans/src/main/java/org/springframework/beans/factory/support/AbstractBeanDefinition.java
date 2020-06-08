@@ -139,22 +139,22 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 
 	@Nullable
-	private volatile Object beanClass;
+	private volatile Object beanClass;  //保存bean的class属性
 
 	@Nullable
-	private String scope = SCOPE_DEFAULT;
+	private String scope = SCOPE_DEFAULT; //保存bean是否单例
 
-	private boolean abstractFlag = false;
-
-	@Nullable
-	private Boolean lazyInit;
-
-	private int autowireMode = AUTOWIRE_NO;
-
-	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
+	private boolean abstractFlag = false; //保存该bean是否抽象
 
 	@Nullable
-	private String[] dependsOn;
+	private Boolean lazyInit; //保存是否延迟初始化
+
+	private int autowireMode = AUTOWIRE_NO; //保存是否自动装配
+
+	private int dependencyCheck = DEPENDENCY_CHECK_NONE; //保存是否检查依赖
+
+	@Nullable
+	private String[] dependsOn;//保存该bean依赖于哪些bean(这些bean必须提前初始化)
 
 	private boolean autowireCandidate = true;
 
@@ -170,24 +170,24 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	private boolean lenientConstructorResolution = true;
 
 	@Nullable
-	private String factoryBeanName;
+	private String factoryBeanName; //用于factorybean，也就是工厂类型的bean
 
 	@Nullable
-	private String factoryMethodName;
+	private String factoryMethodName;//用于factorybean，也就是工厂类型的bean
 
 	@Nullable
-	private ConstructorArgumentValues constructorArgumentValues;
+	private ConstructorArgumentValues constructorArgumentValues; //保存通过构造函数注入的依赖
 
 	@Nullable
-	private MutablePropertyValues propertyValues;
+	private MutablePropertyValues propertyValues; //保存通过setter方法注入的依赖
 
 	private MethodOverrides methodOverrides = new MethodOverrides();
 
 	@Nullable
-	private String initMethodName;
+	private String initMethodName; //对应bean的init-method属性
 
 	@Nullable
-	private String destroyMethodName;
+	private String destroyMethodName; //对应bean的destory-method属性
 
 	private boolean enforceInitMethod = true;
 
